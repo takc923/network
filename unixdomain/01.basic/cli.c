@@ -30,6 +30,13 @@ int main(int argc, char *argv[]) {
     strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path) - 1);
   }
 
+  int optval;
+  socklen_t optlen = sizeof(optval);
+  int ret = getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
+  printf("getsockopt ret: %d, optval: %d\n", ret, optval);
+  ret = getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
+  printf("getsockopt ret: %d, optval: %d\n", ret, optval);
+
   if (connect(fd, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
     perror("connect error");
     exit(-1);
@@ -37,6 +44,7 @@ int main(int argc, char *argv[]) {
 
   for (int i = 1; i <= 10000; i++) {
     printf("%04d ", i);
+    fflush(stdout);
     if (i % 10 == 0) {
       printf("\n");
     }
